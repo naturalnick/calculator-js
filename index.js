@@ -18,7 +18,7 @@ Array.from(buttons).forEach(element => {
             deselectOperand();
         } else {
             switch (buttonText) {
-                case "C": //add cancel entry feature
+                case "C":
                     setDisplayValue("0");
                     firstNumber = 0;
                     secondNumber = 0;
@@ -72,7 +72,6 @@ Array.from(buttons).forEach(element => {
     });
 });
 
-// think of new function name
 function generateNumber(numStr) {
     if (operatorSelected) {
         setDisplayValue("");
