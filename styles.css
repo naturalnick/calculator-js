@@ -28,11 +28,12 @@ h1 {
 .display {
     background-color: black;
     color: white;
-    width: 255px;
+    width: 245px;
     height: 78px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
+    padding-right: 10px;
 }
 
 .btn {
@@ -55,4 +56,8 @@ h1 {
 
 .op-btn {
     background-color:darkgoldenrod;
+}
+
+.selected {
+    filter: brightness(60%);
 }
