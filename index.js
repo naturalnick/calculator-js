@@ -1,9 +1,11 @@
 
-
 let firstNumber = 0;
 let secondNumber = 0;
+let memoryNumber = 0;
+
 let operand = "";
-let resetDisplay = false;
+let operatorSelected = false;
+let operationReady = false
 
 const buttons = document.getElementsByClassName("btn");
 
@@ -15,37 +17,53 @@ Array.from(buttons).forEach(element => {
             generateNumber(buttonText);
             deselectOperand();
         } else {
-
             switch (buttonText) {
-                case "CE":
-                    
+                case "C": //add cancel entry feature
+                    setDisplayValue("0");
+                    firstNumber = 0;
+                    secondNumber = 0;
+                    operatorSelected = true;
+                    deselectOperand();
+                    operand = "";
                     break;
                 case "÷":
                 case "x":
                 case "-":
                 case "+":
-                    secondNumber = firstNumber;
-                    firstNumber = 0;
-                    operand = buttonText;
-                    element.classList.add("selected");
-                    resetDisplay = true;
+                    if (firstNumber != 0) {
+                        if (secondNumber != 0) {
+                            operatorSelected = true;
+                            firstNumber = calculate(firstNumber, operand, secondNumber);
+                            secondNumber = 0;
+                            setDisplayValue(firstNumber);
+                        }
+                        operand = buttonText;
+                        element.classList.add("selected");
+                        operatorSelected = true;
+                    }
                     break;
                 case "=":
-                    firstNumber = calculate(firstNumber, operand, secondNumber);
-                    secondNumber = 0;
-                    document.getElementById("display").innerHTML = firstNumber;
+                    if (operationReady) {
+                        operatorSelected = true;
+                        firstNumber = calculate(firstNumber, operand, secondNumber);
+                        secondNumber = 0;
+                        setDisplayValue(firstNumber);
+                        operationReady = false;
+                    }
                     break;
                 case "M+":
-
+                    memoryNumber += parseFloat(getDisplayValue());
                     break;
                 case "M-":
-
+                    memoryNumber -= parseFloat(getDisplayValue());
                     break;
                 case "MR":
-
+                    setDisplayValue("");
+                    generateNumber(memoryNumber);
+                    operatorSelected = false;
                     break;
                 case "MC":
-
+                    memoryNumber = 0;
                     break;
                 default:
                     break;
@@ -54,19 +72,25 @@ Array.from(buttons).forEach(element => {
     });
 });
 
-
-
+// think of new function name
 function generateNumber(numStr) {
-    if (resetDisplay) document.getElementById("display").innerHTML = "";
-    let numberStr = document.getElementById("display").innerHTML;
+    if (operatorSelected) {
+        setDisplayValue("");
+        operatorSelected = false;
+    }
+    let numberStr = getDisplayValue();
     numberStr += numStr;
-    document.getElementById("display").innerHTML = numberStr;
-    firstNumber = parseFloat(numberStr);
-    console.log(firstNumber);
+    setDisplayValue(numberStr);
+    if (operand === "") {
+        firstNumber = parseFloat(numberStr);
+    } else {
+        secondNumber = parseFloat(numberStr);
+        operationReady = true;
+    }
 }
 
 function calculate(num1, op, num2) {
-    let result;
+    let result = 0;
     switch (op) {
         case "÷":
             result = num1 / num2;
@@ -83,15 +107,27 @@ function calculate(num1, op, num2) {
         default:
             break;
     }
-    console.log(result);
-    return result.toFixed(3);
-    //need to not show decimals.000
+    if (result % 1 != 0) {
+        let resultStr = result.toString();
+        if (resultStr.length > 10) { //need to factor in powers here too
+            resultStr = resultStr.slice(0, 10)
+            result = parseFloat(resultStr);
+        }
+        return result;
+    } else {
+        return result;
+    }
 }
 
+function setDisplayValue(newValue) {
+    document.getElementById("display").innerHTML = newValue;
+}
 
+function getDisplayValue() {
+    return document.getElementById("display").innerHTML;
+}
 
 function deselectOperand() {
-
     Array.from(buttons).forEach(element => {
         if (element.classList.contains("selected")) {
             element.classList.remove("selected");
