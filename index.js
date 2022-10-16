@@ -15,7 +15,6 @@ Array.from(buttons).forEach(element => {
 
         if (parseInt(buttonText) || buttonText == 0 || buttonText === ".") {
             generateNumber(buttonText);
-            deselectOperand();
         } else {
             switch (buttonText) {
                 case "C":
@@ -58,11 +57,8 @@ Array.from(buttons).forEach(element => {
                     memoryNumber -= parseFloat(getDisplayValue());
                     break;
                 case "MR":
-                    if (operatorSelected === true) {
-                        setDisplayValue("");
+                    if (operatorSelected) {
                         generateNumber(memoryNumber);
-                        operatorSelected = false;
-                        deselectOperand();
                     }
                     break;
                 case "MC":
@@ -79,6 +75,7 @@ function generateNumber(numStr) {
     if (operatorSelected) {
         setDisplayValue("");
         operatorSelected = false;
+        deselectOperand();
     }
     let numberStr = getDisplayValue();
     numberStr += numStr;
