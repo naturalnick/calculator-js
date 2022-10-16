@@ -61,6 +61,7 @@ Array.from(buttons).forEach(element => {
                     setDisplayValue("");
                     generateNumber(memoryNumber);
                     operatorSelected = false;
+                    deselectOperand();
                     break;
                 case "MC":
                     memoryNumber = 0;
