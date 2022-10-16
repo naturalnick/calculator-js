@@ -30,12 +30,10 @@ Array.from(buttons).forEach(element => {
                 case "-":
                 case "+":
                     if (firstNumber != 0) {
-                        if (secondNumber != 0) {
-                            operatorSelected = true;
-                            firstNumber = calculate(firstNumber, operand, secondNumber);
-                            secondNumber = 0;
-                            setDisplayValue(firstNumber);
+                        if (secondNumber != 0 || operationReady) {
+                            prepareCalculation();
                         }
+                        //need to add if statement to prevent multiple operators
                         operand = buttonText;
                         element.classList.add("selected");
                         operatorSelected = true;
@@ -43,11 +41,7 @@ Array.from(buttons).forEach(element => {
                     break;
                 case "=":
                     if (operationReady) {
-                        operatorSelected = true;
-                        firstNumber = calculate(firstNumber, operand, secondNumber);
-                        secondNumber = 0;
-                        setDisplayValue(firstNumber);
-                        operationReady = false;
+                        prepareCalculation();
                     }
                     break;
                 case "M+":
@@ -57,9 +51,7 @@ Array.from(buttons).forEach(element => {
                     memoryNumber -= parseFloat(getDisplayValue());
                     break;
                 case "MR":
-                    if (operatorSelected) {
-                        generateNumber(memoryNumber);
-                    }
+                    if (operatorSelected) generateNumber(memoryNumber);
                     break;
                 case "MC":
                     memoryNumber = 0;
@@ -80,7 +72,7 @@ function generateNumber(numStr) {
     let numberStr = getDisplayValue();
     numberStr += numStr;
     setDisplayValue(numberStr);
-    if (operand === "") {
+    if (operand === "") { //operand is only empty while entering the firstNumber, replace with new boolean later
         firstNumber = parseFloat(numberStr);
     } else {
         secondNumber = parseFloat(numberStr);
@@ -116,6 +108,14 @@ function calculate(num1, op, num2) {
     } else {
         return result;
     }
+}
+
+function prepareCalculation() {
+    operatorSelected = true;
+    firstNumber = calculate(firstNumber, operand, secondNumber);
+    secondNumber = 0;
+    setDisplayValue(firstNumber);
+    operationReady = false;
 }
 
 function setDisplayValue(newValue) {
