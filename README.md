@@ -27,6 +27,12 @@ Features:
 
 _Does not yet support exponents or numbers over 10 billion._
 
+What I learned:
+
+- How to reorganize my code in a much cleaner way. Still more work to do, but Kevin B's review of my Rock-Paper-Scissors app helped me get a better idea of how to do this.
+- How to use CSS flexbox
+- How to use calculator memory buttons (I'd never used them before!)
+
 ## Author
 
 - **Nick Schaefer** - _Full-Stack Software Developer_ - [Website](https://nschaefer.com/) | [LinkedIn](https://www.linkedin.com/in/nick-n-schaefer)
