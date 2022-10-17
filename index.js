@@ -60,12 +60,12 @@ function concatenateNumber(num) {
         secondNumber = parseFloat(numberStr);
         operationReady = true;
     }
-    return numberStr
+    return numberStr;
 }
 
 function performOperation() {
     if (operationReady) {
-        const newNum = calculate(firstNumber, operator, secondNumber);
+        const newNum = operators[operator].operate(firstNumber, secondNumber);
         firstNumber = formatResultForDisplay(newNum);
         setDisplayValue(firstNumber);
         secondNumber = 0;
@@ -99,18 +99,22 @@ function formatResultForDisplay(number) {
     }
 }
 
-function calculate(num1, op, num2) {
-    switch (op) {
-        case "÷":
-            return num1 / num2;
-        case "x":
-            return num1 * num2;
-        case "-":
-            return num1 - num2;
-        case "+":
-            return num1 + num2;
-        default:
-            break;
+const operators = {
+    "÷":
+    {
+        operate: function (num1, num2) { return num1 / num2; }
+    },
+    "x":
+    {
+        operate: function (num1, num2) { return num1 * num2; }
+    },
+    "-":
+    {
+        operate: function (num1, num2) { return num1 - num2; }
+    },
+    "+":
+    {
+        operate: function (num1, num2) { return num1 + num2; }
     }
 }
 
