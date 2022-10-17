@@ -14,7 +14,10 @@ const equalButton = document.getElementById("eql-btn");
 const clearButton = document.getElementById("clr-btn");
 
 for (let button of numButtons) {
-    button.addEventListener("click", generateNumber);
+    button.addEventListener("click", function(event) {
+        const newNum = concatenateNumber(button.textContent);
+        setDisplayValue(newNum);
+    });
 }
 
 for (let button of opButtons) {
@@ -46,21 +49,20 @@ equalButton.addEventListener("click", prepareCalculation);
 
 clearButton.addEventListener("click", clearAll);
 
-function generateNumber(event) {
-    const numberPressed = event.target.textContent;
-    if (operatorSelected) { // TODO
+function concatenateNumber(num) {
+    if (operatorSelected) {
         setDisplayValue("");
         deselectOperator();
     }
     let numberStr = getDisplayValue();
-    numberStr += numberPressed;
-    setDisplayValue(numberStr);
-    if (operator === "") { //operator is only empty while entering the firstNumber, replace with new boolean later
+    numberStr += num;
+    if (operator === "") { //operator is only empty while entering the firstNumber, this works, but replace with new boolean later
         firstNumber = parseFloat(numberStr);
     } else {
         secondNumber = parseFloat(numberStr);
         operationReady = true;
     }
+    return numberStr
 }
 
 function prepareCalculation() {
@@ -79,17 +81,21 @@ function selectOperator(event) {
         if (secondNumber != 0 || operationReady) {
             prepareCalculation();
         }
-        //need to add if statement to prevent multiple operators
         operator = event.target.textContent;
+        for (let button of opButtons) {
+            button.classList.remove("selected");
+        }
         event.target.classList.add("selected");
         operatorSelected = true;
     }
 }
 
+//TODO add exponent functionality
+//TODO save sliced decimals for use in calculation
 function formatResultForDisplay(number) {
     if (number % 1 != 0) {
         let resultStr = number.toString();
-        if (resultStr.length > 10) { //need to factor in exponents here too
+        if (resultStr.length > 10) {
             resultStr = resultStr.slice(0, 10);
         }
         return parseFloat(resultStr);
