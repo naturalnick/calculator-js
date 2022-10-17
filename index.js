@@ -9,21 +9,19 @@ let operationReady = false
 
 const buttons = document.getElementsByClassName("btn");
 
-Array.from(buttons).forEach(element => {
-    element.addEventListener("click", function (event) {
-        const buttonText = this.innerHTML;
+for (let button of buttons) {
+    button.addEventListener("click", executeButton);
+}
 
-        if (parseInt(buttonText) || buttonText == 0 || buttonText === ".") {
-            generateNumber(buttonText);
+function executeButton(event) {
+    const buttonPressed = event.target.textContent;
+
+        if (parseInt(buttonPressed) || buttonPressed == 0 || buttonPressed === ".") {
+            generateNumber(buttonPressed);
         } else {
-            switch (buttonText) {
+            switch (buttonPressed) {
                 case "C":
-                    setDisplayValue("0");
-                    firstNumber = 0;
-                    secondNumber = 0;
-                    operatorSelected = true;
-                    deselectOperand();
-                    operand = "";
+                    clearAll();
                     break;
                 case "÷":
                 case "x":
@@ -34,8 +32,8 @@ Array.from(buttons).forEach(element => {
                             prepareCalculation();
                         }
                         //need to add if statement to prevent multiple operators
-                        operand = buttonText;
-                        element.classList.add("selected");
+                        operand = buttonPressed;
+                        event.target.classList.add("selected");
                         operatorSelected = true;
                     }
                     break;
@@ -60,8 +58,16 @@ Array.from(buttons).forEach(element => {
                     break;
             }
         }
-    });
-});
+}
+
+function clearAll() {
+    setDisplayValue("0");
+    firstNumber = 0;
+    secondNumber = 0;
+    operatorSelected = true;
+    deselectOperand();
+    operand = "";
+}
 
 function generateNumber(numStr) {
     if (operatorSelected) {
@@ -119,11 +125,11 @@ function prepareCalculation() {
 }
 
 function setDisplayValue(newValue) {
-    document.getElementById("display").innerHTML = newValue;
+    document.getElementById("display").textContent = newValue;
 }
 
 function getDisplayValue() {
-    return document.getElementById("display").innerHTML;
+    return document.getElementById("display").textContent;;
 }
 
 function deselectOperand() {
