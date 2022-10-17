@@ -14,7 +14,7 @@ const equalButton = document.getElementById("eql-btn");
 const clearButton = document.getElementById("clr-btn");
 
 for (let button of numButtons) {
-    button.addEventListener("click", function(event) {
+    button.addEventListener("click", function (event) {
         const newNum = concatenateNumber(button.textContent);
         setDisplayValue(newNum);
     });
@@ -25,18 +25,16 @@ for (let button of opButtons) {
 }
 
 for (let button of memButtons) {
-    button.addEventListener("click", function() {
+    button.addEventListener("click", function () {
         switch (button.textContent) {
             case "M+":
-                addMemory();
+            case "M-":
+                changeMemory(button.textContent);
                 break;
-                case "M-":
-                subtractMemory();
-                break;
-                case "MR":
+            case "MR":
                 recallMemory();
                 break;
-                case "MC":
+            case "MC":
                 clearMemory();
                 break;
             default:
@@ -45,7 +43,7 @@ for (let button of memButtons) {
     });
 }
 
-equalButton.addEventListener("click", prepareCalculation);
+equalButton.addEventListener("click", performOperation);
 
 clearButton.addEventListener("click", clearAll);
 
@@ -65,11 +63,10 @@ function concatenateNumber(num) {
     return numberStr
 }
 
-function prepareCalculation() {
+function performOperation() {
     if (operationReady) {
-        operatorSelected = true;
-        firstNumber = calculate(firstNumber, operator, secondNumber);
-        firstNumber = formatResultForDisplay(firstNumber);
+        const newNum = calculate(firstNumber, operator, secondNumber);
+        firstNumber = formatResultForDisplay(newNum);
         setDisplayValue(firstNumber);
         secondNumber = 0;
         operationReady = false;
@@ -78,9 +75,7 @@ function prepareCalculation() {
 
 function selectOperator(event) {
     if (firstNumber != 0) {
-        if (secondNumber != 0 || operationReady) {
-            prepareCalculation();
-        }
+        if (secondNumber != 0) performOperation();
         operator = event.target.textContent;
         for (let button of opButtons) {
             button.classList.remove("selected");
@@ -144,15 +139,28 @@ function clearAll() {
     operator = "";
 }
 
-function addMemory() {
-    memoryNumber += parseFloat(getDisplayValue());
-}
+function changeMemory(button) {
+    const valueOnDisplay = getDisplayValue();
+    if (valueOnDisplay != "0" || valueOnDisplay != "") {
+        switch (button) {
+            case "M+":
+                memoryNumber += parseFloat(valueOnDisplay);
+                break;
+            case "M+":
+                memoryNumber -= parseFloat(valueOnDisplay);
+                break;
+            default:
+                break;
+        }
 
-function subtractMemory() {
-    memoryNumber -= parseFloat(getDisplayValue());
+    }
 }
 
 function recallMemory() {
+    if (firstNumber === 0) {
+        firstNumber = memoryNumber
+        setDisplayValue(firstNumber);
+    }
     if (operatorSelected) {
         secondNumber = memoryNumber;
         setDisplayValue(secondNumber);
