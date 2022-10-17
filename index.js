@@ -150,13 +150,10 @@ function changeMemory(button) {
             case "M+":
                 memoryNumber += parseFloat(valueOnDisplay);
                 break;
-            case "M+":
+            case "M-":
                 memoryNumber -= parseFloat(valueOnDisplay);
                 break;
-            default:
-                break;
         }
-
     }
 }
 
