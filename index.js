@@ -3,82 +3,59 @@ let firstNumber = 0;
 let secondNumber = 0;
 let memoryNumber = 0;
 
-let operand = "";
+let operator = "";
 let operatorSelected = false;
 let operationReady = false
 
-const buttons = document.getElementsByClassName("btn");
+const numButtons = document.getElementsByClassName("num-btn");
+const opButtons = document.getElementsByClassName("op-btn");
+const memButtons = document.getElementsByClassName("mem-btn");
+const equalButton = document.getElementById("eql-btn");
+const clearButton = document.getElementById("clr-btn");
 
-for (let button of buttons) {
-    button.addEventListener("click", executeButton);
+for (let button of numButtons) {
+    button.addEventListener("click", generateNumber);
 }
 
-function executeButton(event) {
-    const buttonPressed = event.target.textContent;
+for (let button of opButtons) {
+    button.addEventListener("click", selectOperator);
+}
 
-        if (parseInt(buttonPressed) || buttonPressed == 0 || buttonPressed === ".") {
-            generateNumber(buttonPressed);
-        } else {
-            switch (buttonPressed) {
-                case "C":
-                    clearAll();
-                    break;
-                case "÷":
-                case "x":
-                case "-":
-                case "+":
-                    if (firstNumber != 0) {
-                        if (secondNumber != 0 || operationReady) {
-                            prepareCalculation();
-                        }
-                        //need to add if statement to prevent multiple operators
-                        operand = buttonPressed;
-                        event.target.classList.add("selected");
-                        operatorSelected = true;
-                    }
-                    break;
-                case "=":
-                    if (operationReady) {
-                        prepareCalculation();
-                    }
-                    break;
-                case "M+":
-                    memoryNumber += parseFloat(getDisplayValue());
-                    break;
+for (let button of memButtons) {
+    button.addEventListener("click", function() {
+        switch (button.textContent) {
+            case "M+":
+                addMemory();
+                break;
                 case "M-":
-                    memoryNumber -= parseFloat(getDisplayValue());
-                    break;
+                subtractMemory();
+                break;
                 case "MR":
-                    if (operatorSelected) generateNumber(memoryNumber);
-                    break;
+                recallMemory();
+                break;
                 case "MC":
-                    memoryNumber = 0;
-                    break;
-                default:
-                    break;
-            }
+                clearMemory();
+                break;
+            default:
+                break;
         }
+    });
 }
 
-function clearAll() {
-    setDisplayValue("0");
-    firstNumber = 0;
-    secondNumber = 0;
-    operatorSelected = true;
-    deselectOperand();
-    operand = "";
-}
+equalButton.addEventListener("click", prepareCalculation);
 
-function generateNumber(numStr) {
-    if (operatorSelected) {
+clearButton.addEventListener("click", clearAll);
+
+function generateNumber(event) {
+    const numberPressed = event.target.textContent;
+    if (operatorSelected) { // TODO
         setDisplayValue("");
-        operatorSelected = false;
-        deselectOperand();
+        deselectOperator();
     }
     let numberStr = getDisplayValue();
-    numberStr += numStr;
+    numberStr += numberPressed;
     setDisplayValue(numberStr);
-    if (operand === "") { //operand is only empty while entering the firstNumber, replace with new boolean later
+    if (operator === "") { //operator is only empty while entering the firstNumber, replace with new boolean later
         firstNumber = parseFloat(numberStr);
     } else {
         secondNumber = parseFloat(numberStr);
@@ -86,42 +63,54 @@ function generateNumber(numStr) {
     }
 }
 
-function calculate(num1, op, num2) {
-    let result = 0;
-    switch (op) {
-        case "÷":
-            result = num1 / num2;
-            break;
-        case "x":
-            result = num1 * num2;
-            break;
-        case "-":
-            result = num1 - num2;
-            break;
-        case "+":
-            result = num1 + num2;
-            break;
-        default:
-            break;
-    }
-    if (result % 1 != 0) {
-        let resultStr = result.toString();
-        if (resultStr.length > 10) { //need to factor in powers here too
-            resultStr = resultStr.slice(0, 10)
-            result = parseFloat(resultStr);
-        }
-        return result;
-    } else {
-        return result;
+function prepareCalculation() {
+    if (operationReady) {
+        operatorSelected = true;
+        firstNumber = calculate(firstNumber, operator, secondNumber);
+        firstNumber = formatResultForDisplay(firstNumber);
+        setDisplayValue(firstNumber);
+        secondNumber = 0;
+        operationReady = false;
     }
 }
 
-function prepareCalculation() {
-    operatorSelected = true;
-    firstNumber = calculate(firstNumber, operand, secondNumber);
-    secondNumber = 0;
-    setDisplayValue(firstNumber);
-    operationReady = false;
+function selectOperator(event) {
+    if (firstNumber != 0) {
+        if (secondNumber != 0 || operationReady) {
+            prepareCalculation();
+        }
+        //need to add if statement to prevent multiple operators
+        operator = event.target.textContent;
+        event.target.classList.add("selected");
+        operatorSelected = true;
+    }
+}
+
+function formatResultForDisplay(number) {
+    if (number % 1 != 0) {
+        let resultStr = number.toString();
+        if (resultStr.length > 10) { //need to factor in exponents here too
+            resultStr = resultStr.slice(0, 10);
+        }
+        return parseFloat(resultStr);
+    } else {
+        return number;
+    }
+}
+
+function calculate(num1, op, num2) {
+    switch (op) {
+        case "÷":
+            return num1 / num2;
+        case "x":
+            return num1 * num2;
+        case "-":
+            return num1 - num2;
+        case "+":
+            return num1 + num2;
+        default:
+            break;
+    }
 }
 
 function setDisplayValue(newValue) {
@@ -129,13 +118,43 @@ function setDisplayValue(newValue) {
 }
 
 function getDisplayValue() {
-    return document.getElementById("display").textContent;;
+    return document.getElementById("display").textContent;
 }
 
-function deselectOperand() {
-    Array.from(buttons).forEach(element => {
-        if (element.classList.contains("selected")) {
-            element.classList.remove("selected");
+function deselectOperator() {
+    operatorSelected = false;
+    for (let button of opButtons) {
+        if (button.classList.contains("selected")) {
+            button.classList.remove("selected");
         }
-    })
+    }
+}
+
+function clearAll() {
+    setDisplayValue("");
+    firstNumber = 0;
+    secondNumber = 0;
+    deselectOperator();
+    operator = "";
+}
+
+function addMemory() {
+    memoryNumber += parseFloat(getDisplayValue());
+}
+
+function subtractMemory() {
+    memoryNumber -= parseFloat(getDisplayValue());
+}
+
+function recallMemory() {
+    if (operatorSelected) {
+        secondNumber = memoryNumber;
+        setDisplayValue(secondNumber);
+        deselectOperator();
+        operationReady = true;
+    }
+}
+
+function clearMemory() {
+    memoryNumber = 0;
 }
