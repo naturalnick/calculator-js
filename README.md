@@ -11,7 +11,7 @@ See it in action [here](https://naturalnick.github.io/calculator-js/).
 <br>
 
 Screenshot:
-<img src="images/screenshot.png">
+<img src="images/screenshot.png" width="25%">
 
 ## Summary
 
