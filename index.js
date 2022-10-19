@@ -50,7 +50,7 @@ clearButton.addEventListener("click", clearAll);
 function concatenateNumber(num) {
     if (operatorSelected) {
         setDisplayValue("");
-        deselectOperator();
+        deselectOperators();
     }
     let numberStr = getDisplayValue();
     numberStr += num;
@@ -77,9 +77,7 @@ function selectOperator(event) {
     if (firstNumber != 0) {
         if (secondNumber != 0) performOperation();
         operator = event.target.textContent;
-        for (let button of opButtons) {
-            button.classList.remove("selected");
-        }
+        deselectOperators();
         event.target.classList.add("selected");
         operatorSelected = true;
     }
@@ -126,7 +124,7 @@ function getDisplayValue() {
     return document.getElementById("display").textContent;
 }
 
-function deselectOperator() {
+function deselectOperators() {
     operatorSelected = false;
     for (let button of opButtons) {
         if (button.classList.contains("selected")) {
@@ -139,7 +137,7 @@ function clearAll() {
     setDisplayValue("");
     firstNumber = 0;
     secondNumber = 0;
-    deselectOperator();
+    deselectOperators();
     operator = "";
 }
 
@@ -165,7 +163,7 @@ function recallMemory() {
     if (operatorSelected) {
         secondNumber = memoryNumber;
         setDisplayValue(secondNumber);
-        deselectOperator();
+        deselectOperators();
         operationReady = true;
     }
 }
