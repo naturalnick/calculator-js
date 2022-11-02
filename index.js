@@ -1,5 +1,6 @@
 //TODO add exponent functionality
 //TODO save sliced decimals for use in calculation
+//TODO add hover to buttons
 
 const state = {
 	currentOperator: "",
@@ -14,19 +15,32 @@ const state = {
 
 const display = {
 	set(newValue) {
-		document.getElementById("display").textContent = newValue;
+		document.getElementById("display").textContent = this.format(newValue);
 	},
 	get() {
 		return document.getElementById("display").textContent;
 	},
+	format(numStr) {
+		if (Number(numStr) % 1 != 0) {
+			let resultStr = number.toString();
+			if (resultStr.length > 10) {
+				resultStr = resultStr.slice(0, 10);
+			}
+			return parseFloat(resultStr);
+		} else {
+			return number;
+		}
+	},
 };
+
+display.set("0");
 
 document.querySelectorAll(".num-btn").forEach((btn) =>
 	btn.addEventListener("click", () => {
 		state.num2 =
 			state.num2 === undefined
-				? (state.num2 = Number(btn.textContent))
-				: Number(state.num2.toString().concat(btn.textContent));
+				? (state.num2 = btn.textContent)
+				: state.num2.concat(btn.textContent);
 		display.set(state.num2);
 		deselectOperators();
 		console.log(state);
@@ -36,9 +50,7 @@ document.querySelectorAll(".num-btn").forEach((btn) =>
 document.querySelectorAll(".dec-btn").forEach((btn) =>
 	btn.addEventListener("click", () => {
 		state.num2 =
-			state.num2 === undefined
-				? (state.num2 = 0.0)
-				: Number(state.num2.toString().concat(btn.textContent));
+			state.num2 === undefined ? "0." : state.num2.concat(btn.textContent);
 		display.set(state.num2);
 		deselectOperators();
 		console.log(state);
@@ -48,6 +60,7 @@ document.querySelectorAll(".dec-btn").forEach((btn) =>
 const operatorButtons = document.querySelectorAll(".op-btn");
 operatorButtons.forEach((btn) =>
 	btn.addEventListener("click", (event) => {
+		if (checkOperationStatus()) performOperation();
 		if (state.num2 != undefined) {
 			state.num1 = state.num2;
 			state.num2 = undefined;
@@ -55,7 +68,6 @@ operatorButtons.forEach((btn) =>
 		deselectOperators();
 		event.target.classList.add("selected");
 		state.currentOperator = event.target.dataset.operator;
-		if (checkOperationStatus()) performOperation();
 		console.log(state);
 	})
 );
@@ -67,7 +79,6 @@ function deselectOperators() {
 }
 
 document.getElementById("clr-btn").addEventListener("click", () => {
-	console.log(state);
 	display.set("0");
 	state.reset();
 	deselectOperators();
@@ -97,7 +108,18 @@ const operators = {
 };
 
 function operate(num1, num2, operator) {
-	return operators[operator].calculate(num1, num2);
+	return String(operators[operator].calculate(Number(num1), Number(num2)));
+}
+
+document.getElementById("eql-btn").addEventListener("click", () => {
+	if (checkOperationStatus()) performOperation();
+});
+
+function performOperation(event) {
+	state.num1 = operate(state.num1, state.num2, state.currentOperator);
+	state.num2 = undefined;
+	state.currentOperator = "";
+	display.set(state.num1);
 }
 
 function checkOperationStatus() {
@@ -108,30 +130,6 @@ function checkOperationStatus() {
 	) {
 		return true;
 	} else return false;
-}
-
-document.getElementById("eql-btn").addEventListener("click", performOperation);
-
-function performOperation(event) {
-	if (checkOperationStatus()) {
-		state.num1 = operate(state.num1, state.num2, state.currentOperator);
-		state.num2 = undefined;
-		display.set(formatForDisplay(state.num1));
-		deselectOperators();
-	}
-	console.log(state);
-}
-
-function formatForDisplay(number) {
-	if (number % 1 != 0) {
-		let resultStr = number.toString();
-		if (resultStr.length > 10) {
-			resultStr = resultStr.slice(0, 10);
-		}
-		return parseFloat(resultStr);
-	} else {
-		return number;
-	}
 }
 
 document.querySelectorAll(".mem-btn").forEach((btn) =>
