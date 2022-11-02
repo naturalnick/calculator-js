@@ -6,6 +6,7 @@ const state = {
 	currentOperator: "",
 	num1: undefined,
 	num2: undefined,
+	memory: undefined,
 	reset() {
 		this.currentOperator = "";
 		num1 = undefined;
@@ -38,19 +39,11 @@ display.set(state.num2);
 
 document.querySelectorAll(".num-btn").forEach((btn) =>
 	btn.addEventListener("click", () => {
-		state.num2 =
-			state.num2 === undefined
-				? (state.num2 = btn.textContent)
-				: state.num2.concat(btn.textContent);
-		display.set(state.num2);
-		deselectOperators();
-	})
-);
-
-document.querySelectorAll(".dec-btn").forEach((btn) =>
-	btn.addEventListener("click", () => {
-		state.num2 =
-			state.num2 === undefined ? "0." : state.num2.concat(btn.textContent);
+		if (state.num2 != undefined) {
+			state.num2 = state.num2.concat(btn.textContent);
+		} else {
+			state.num2 = btn.textContent === "." ? ".0" : btn.textContent;
+		}
 		display.set(state.num2);
 		deselectOperators();
 	})
@@ -77,9 +70,10 @@ function deselectOperators() {
 }
 
 document.getElementById("clr-btn").addEventListener("click", () => {
-	display.set(state.num2);
 	state.reset();
+	display.set(state.num2);
 	deselectOperators();
+	console.log(state);
 });
 
 const operators = {
@@ -130,54 +124,39 @@ function checkOperationStatus() {
 	} else return false;
 }
 
-document.querySelectorAll(".mem-btn").forEach((btn) =>
-	btn.addEventListener("click", () => {
-		switch (btn.textContent) {
-			case "M+":
-			case "M-":
-				changeMemory(btn.textContent);
-				break;
-			case "MR":
-				recallMemory();
-				break;
-			case "MC":
-				clearMemory();
-				break;
-			default:
-				break;
-		}
-	})
-);
+document.getElementById("mem-btn-add").addEventListener("click", changeMemory);
+document.getElementById("mem-btn-sub").addEventListener("click", changeMemory);
 
-let memoryNumber = 0;
-
-function changeMemory(btn) {
-	const valueOnDisplay = display.get();
-	if (valueOnDisplay != "0") {
-		switch (btn) {
-			case "M+":
-				memoryNumber += parseFloat(valueOnDisplay);
-				break;
-			case "M-":
-				memoryNumber -= parseFloat(valueOnDisplay);
-				break;
-		}
+function changeMemory(event) {
+	if (state.num1 != undefined || state.num2 != undefined) {
+		const currentValue = Number(
+			state.num2 === undefined ? state.num1 : state.num2
+		);
+		state.memory = String(
+			(state.memory === undefined ? 0 : Number(state.memory)) +
+				(event.target.textContent === "M+" ? currentValue : -currentValue)
+		);
 	}
+	console.log(state);
 }
+
+document
+	.getElementById("mem-btn-recall")
+	.addEventListener("click", recallMemory);
 
 function recallMemory() {
-	if (state.num1 === 0) {
-		state.num1 = memoryNumber;
+	console.log(state);
+	if (state.num1 === undefined) {
+		state.num1 = state.memory;
 		display.set(state.num1);
-	}
-	if (state.currentOperator != "") {
-		state.num2 = memoryNumber;
+	} else {
+		state.num2 = state.memory;
 		display.set(state.num2);
-		deselectOperators();
-		operationReady = true;
 	}
+	if (state.currentOperator != "") deselectOperators();
+	console.log(state);
 }
 
-function clearMemory() {
-	memoryNumber = 0;
-}
+document.getElementById("mem-btn-clear").addEventListener("click", () => {
+	state.memory = undefined;
+});
