@@ -21,19 +21,20 @@ const display = {
 		return document.getElementById("display").textContent;
 	},
 	format(numStr) {
+		if (numStr === undefined) return "0";
 		if (Number(numStr) % 1 != 0) {
-			let resultStr = number.toString();
+			let resultStr = numStr.toString();
 			if (resultStr.length > 10) {
 				resultStr = resultStr.slice(0, 10);
 			}
 			return parseFloat(resultStr);
 		} else {
-			return number;
+			return numStr;
 		}
 	},
 };
 
-display.set("0");
+display.set(state.num2);
 
 document.querySelectorAll(".num-btn").forEach((btn) =>
 	btn.addEventListener("click", () => {
@@ -43,7 +44,6 @@ document.querySelectorAll(".num-btn").forEach((btn) =>
 				: state.num2.concat(btn.textContent);
 		display.set(state.num2);
 		deselectOperators();
-		console.log(state);
 	})
 );
 
@@ -53,7 +53,6 @@ document.querySelectorAll(".dec-btn").forEach((btn) =>
 			state.num2 === undefined ? "0." : state.num2.concat(btn.textContent);
 		display.set(state.num2);
 		deselectOperators();
-		console.log(state);
 	})
 );
 
@@ -68,7 +67,6 @@ operatorButtons.forEach((btn) =>
 		deselectOperators();
 		event.target.classList.add("selected");
 		state.currentOperator = event.target.dataset.operator;
-		console.log(state);
 	})
 );
 
@@ -79,7 +77,7 @@ function deselectOperators() {
 }
 
 document.getElementById("clr-btn").addEventListener("click", () => {
-	display.set("0");
+	display.set(state.num2);
 	state.reset();
 	deselectOperators();
 });
