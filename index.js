@@ -1,129 +1,128 @@
-let memoryNumber = 0;
-
-let operationStarted = false;
-let operatorSelected = false;
-let operationReady = false;
-
-const numButtons = document.getElementsByClassName("num-btn");
-const opButtons = document.getElementsByClassName("op-btn");
-const memButtons = document.getElementsByClassName("mem-btn");
-const equalButton = document.getElementById("eql-btn");
-const clearButton = document.getElementById("clr-btn");
-
 //TODO add exponent functionality
 //TODO save sliced decimals for use in calculation
 
-for (let button of numButtons) {
-	button.addEventListener("click", function (event) {
-		const newNum = concatenateNumber(button.textContent);
-		setDisplayValue(newNum);
-	});
-}
-
-for (let button of opButtons) {
-	button.addEventListener("click", selectOperator);
-}
-
-for (let button of memButtons) {
-	button.addEventListener("click", function () {
-		switch (button.textContent) {
-			case "M+":
-			case "M-":
-				changeMemory(button.textContent);
-				break;
-			case "MR":
-				recallMemory();
-				break;
-			case "MC":
-				clearMemory();
-				break;
-			default:
-				break;
-		}
-	});
-}
-
-equalButton.addEventListener("click", performOperation);
-
-clearButton.addEventListener("click", clearAll);
-
-const operation = {
-	num1: 0,
-	num2: 0,
-	operator: "",
-	operate() {
-		switch (this.operator) {
-			case "÷":
-				return this.num1 / this.num2;
-			case "x":
-				return this.num1 * this.num2;
-			case "-":
-				return this.num1 - this.num2;
-			case "+":
-				return this.num1 + this.num2;
-			default:
-				break;
-		}
-	},
+const state = {
+	currentOperator: "",
+	num1: undefined,
+	num2: undefined,
 	reset() {
-		this.num1 = 0;
-		this.num2 = 0;
-		this.operator = "";
+		this.currentOperator = "";
+		num1 = undefined;
+		num2 = undefined;
 	},
 };
 
-function performOperation(event) {
-	if (operationReady) {
-		const newNum = operation.operate();
-		operation.num1 = formatResultForDisplay(newNum);
-		setDisplayValue(operation.num1);
-		if (operatorSelected) {
-			operation.num2 = 0;
-		} else {
-			operation.reset();
-		}
-		operationReady = false;
-		if (event.target.textContent === "=") {
-			operationStarted = false;
-		}
-	}
-}
+const display = {
+	set(newValue) {
+		document.getElementById("display").textContent = newValue;
+	},
+	get() {
+		return document.getElementById("display").textContent;
+	},
+};
 
-function selectOperator(event) {
-	if (operation.num1 != 0) {
+document.querySelectorAll(".num-btn").forEach((btn) =>
+	btn.addEventListener("click", () => {
+		state.num2 =
+			state.num2 === undefined
+				? (state.num2 = Number(btn.textContent))
+				: Number(state.num2.toString().concat(btn.textContent));
+		display.set(state.num2);
+		deselectOperators();
+		console.log(state);
+	})
+);
+
+document.querySelectorAll(".dec-btn").forEach((btn) =>
+	btn.addEventListener("click", () => {
+		state.num2 =
+			state.num2 === undefined
+				? (state.num2 = 0.0)
+				: Number(state.num2.toString().concat(btn.textContent));
+		display.set(state.num2);
+		deselectOperators();
+		console.log(state);
+	})
+);
+
+const operatorButtons = document.querySelectorAll(".op-btn");
+operatorButtons.forEach((btn) =>
+	btn.addEventListener("click", (event) => {
+		if (state.num2 != undefined) {
+			state.num1 = state.num2;
+			state.num2 = undefined;
+		}
 		deselectOperators();
 		event.target.classList.add("selected");
-		operatorSelected = true;
-		if (operation.num2 != 0) performOperation();
-		operation.operator = event.target.textContent;
-	}
+		state.currentOperator = event.target.dataset.operator;
+		if (checkOperationStatus()) performOperation();
+		console.log(state);
+	})
+);
+
+function deselectOperators() {
+	document
+		.querySelectorAll(".op-btn")
+		.forEach((btn) => btn.classList.remove("selected"));
 }
 
-function concatenateNumber(num) {
-	if (operatorSelected) {
-		setDisplayValue("0");
+document.getElementById("clr-btn").addEventListener("click", () => {
+	console.log(state);
+	display.set("0");
+	state.reset();
+	deselectOperators();
+});
+
+const operators = {
+	multiply: {
+		calculate(num1, num2) {
+			return num1 * num2;
+		},
+	},
+	divide: {
+		calculate(num1, num2) {
+			return num1 / num2;
+		},
+	},
+	subtract: {
+		calculate(num1, num2) {
+			return num1 - num2;
+		},
+	},
+	add: {
+		calculate(num1, num2) {
+			return num1 + num2;
+		},
+	},
+};
+
+function operate(num1, num2, operator) {
+	return operators[operator].calculate(num1, num2);
+}
+
+function checkOperationStatus() {
+	if (
+		state.currentOperator != "" &&
+		state.num1 != undefined &&
+		state.num2 != undefined
+	) {
+		return true;
+	} else return false;
+}
+
+document.getElementById("eql-btn").addEventListener("click", performOperation);
+
+function performOperation(event) {
+	if (checkOperationStatus()) {
+		state.num1 = operate(state.num1, state.num2, state.currentOperator);
+		state.num2 = undefined;
+		display.set(formatForDisplay(state.num1));
 		deselectOperators();
 	}
-	if (!operationStarted) {
-		setDisplayValue("0");
-		operation.reset();
-		operationStarted = true;
-	}
-	let numberStr = getDisplayValue();
-	if (numberStr === "0") numberStr = "";
-	numberStr += num;
-	if (operation.operator === "") {
-		//operator is only empty while entering the firstNumber, this works, but replace with new boolean later
-		operation.num1 = parseFloat(numberStr);
-		operationStarted = true;
-	} else {
-		operation.num2 = parseFloat(numberStr);
-		operationReady = true;
-	}
-	return numberStr;
+	console.log(state);
 }
 
-function formatResultForDisplay(number) {
+function formatForDisplay(number) {
 	if (number % 1 != 0) {
 		let resultStr = number.toString();
 		if (resultStr.length > 10) {
@@ -135,35 +134,31 @@ function formatResultForDisplay(number) {
 	}
 }
 
-function setDisplayValue(newValue) {
-	document.getElementById("display").textContent = newValue;
-}
-
-function getDisplayValue() {
-	return document.getElementById("display").textContent;
-}
-
-function deselectOperators() {
-	operatorSelected = false;
-	for (let button of opButtons) {
-		if (button.classList.contains("selected")) {
-			button.classList.remove("selected");
+document.querySelectorAll(".mem-btn").forEach((btn) =>
+	btn.addEventListener("click", () => {
+		switch (btn.textContent) {
+			case "M+":
+			case "M-":
+				changeMemory(btn.textContent);
+				break;
+			case "MR":
+				recallMemory();
+				break;
+			case "MC":
+				clearMemory();
+				break;
+			default:
+				break;
 		}
-	}
-}
+	})
+);
 
-function clearAll() {
-	setDisplayValue("0");
-	operation.num1 = 0;
-	operation.num2 = 0;
-	deselectOperators();
-	operation.operator = "";
-}
+let memoryNumber = 0;
 
-function changeMemory(button) {
-	const valueOnDisplay = getDisplayValue();
+function changeMemory(btn) {
+	const valueOnDisplay = display.get();
 	if (valueOnDisplay != "0") {
-		switch (button) {
+		switch (btn) {
 			case "M+":
 				memoryNumber += parseFloat(valueOnDisplay);
 				break;
@@ -175,13 +170,13 @@ function changeMemory(button) {
 }
 
 function recallMemory() {
-	if (operation.num1 === 0) {
-		operation.num1 = memoryNumber;
-		setDisplayValue(operation.num1);
+	if (state.num1 === 0) {
+		state.num1 = memoryNumber;
+		display.set(state.num1);
 	}
-	if (operatorSelected) {
-		operation.num2 = memoryNumber;
-		setDisplayValue(operation.num2);
+	if (state.currentOperator != "") {
+		state.num2 = memoryNumber;
+		display.set(state.num2);
 		deselectOperators();
 		operationReady = true;
 	}

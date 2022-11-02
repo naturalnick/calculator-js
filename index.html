@@ -1,53 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Calculator</title>
+		<link rel="stylesheet" href="styles.css" />
+	</head>
 
-<head>
-    <meta charset="UTF-8">
-    <title>Calculator</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
+	<body>
+		<h1>Calculator</h1>
 
-<body>
-    <h1>Calculator</h1>
+		<div class="flex-container">
+			<div class="row">
+				<div class="btn clr-btn" id="clr-btn">C</div>
+				<div class="display" id="display"></div>
+			</div>
+			<div class="row">
+				<div class="btn num-btn">9</div>
+				<div class="btn num-btn">8</div>
+				<div class="btn num-btn">7</div>
+				<div data-operator="divide" class="btn op-btn">÷</div>
+			</div>
+			<div class="row">
+				<div class="btn num-btn">6</div>
+				<div class="btn num-btn">5</div>
+				<div class="btn num-btn">4</div>
+				<div data-operator="multiply" class="btn op-btn">x</div>
+			</div>
+			<div class="row">
+				<div class="btn num-btn">3</div>
+				<div class="btn num-btn">2</div>
+				<div class="btn num-btn">1</div>
+				<div data-operator="subtract" class="btn op-btn">-</div>
+			</div>
+			<div class="row">
+				<div class="btn num-btn">0</div>
+				<div class="btn dec-btn">.</div>
+				<div class="btn" id="eql-btn">=</div>
+				<div data-operator="add" class="btn op-btn">+</div>
+			</div>
+			<div class="row">
+				<div class="btn mem-btn">M+</div>
+				<div class="btn mem-btn">M-</div>
+				<div class="btn mem-btn">MR</div>
+				<div class="btn mem-btn">MC</div>
+			</div>
+		</div>
 
-    <div class="flex-container">
-        <div class="row">
-            <div class="btn clr-btn" id="clr-btn">C</div>
-            <div class="display" id="display"></div>
-        </div>
-        <div class="row">
-            <div class="btn num-btn">9</div>
-            <div class="btn num-btn">8</div>
-            <div class="btn num-btn">7</div>
-            <div class="btn op-btn">÷</div>
-        </div>
-        <div class="row">
-            <div class="btn num-btn">6</div>
-            <div class="btn num-btn">5</div>
-            <div class="btn num-btn">4</div>
-            <div class="btn op-btn">x</div>
-        </div>
-        <div class="row">
-            <div class="btn num-btn">3</div>
-            <div class="btn num-btn">2</div>
-            <div class="btn num-btn">1</div>
-            <div class="btn op-btn">-</div>
-        </div>
-        <div class="row">
-            <div class="btn num-btn">0</div>
-            <div class="btn num-btn">.</div>
-            <div class="btn" id="eql-btn">=</div>
-            <div class="btn op-btn">+</div>
-        </div>
-        <div class="row">
-            <div class="btn mem-btn">M+</div>
-            <div class="btn mem-btn">M-</div>
-            <div class="btn mem-btn">MR</div>
-            <div class="btn mem-btn">MC</div>
-        </div>
-    </div>
-
-    <script src="index.js"></script>
-</body>
-
+		<script src="index.js"></script>
+	</body>
 </html>
