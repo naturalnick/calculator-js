@@ -1,63 +1,71 @@
 body {
-    text-align: center;
-    margin: 0;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+	text-align: center;
+	margin: 0;
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 h1 {
-    font-size: 28pt;
+	font-size: 28pt;
 }
 
 .flex-container {
-    border: 5px solid black;
-    width: 342px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin: auto;
-    padding: 10px;
-    font-size: 24pt;
-    font-weight: bold;
+	border: 5px solid black;
+	width: 342px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin: auto;
+	padding: 10px;
+	font-size: 24pt;
+	font-weight: bold;
 }
 
 .row {
-    display: flex;
-    gap: 10px;
+	display: flex;
+	gap: 10px;
 }
 
 .display {
-    background-color: black;
-    color: white;
-    width: 245px;
-    height: 78px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding-right: 10px;
+	background-color: black;
+	color: white;
+	width: 245px;
+	height: 78px;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	padding-right: 10px;
 }
 
 .btn {
-    background-color: darkcyan;
-    width: 78px;
-    height: 78px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	background-color: darkcyan;
+	width: 78px;
+	height: 78px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .mem-btn {
-    background-color: gray;
-    font-size: 20pt;
+	background-color: gray;
+	font-size: 20pt;
 }
 
 .clr-btn {
-    background-color: brown;
+	background-color: brown;
 }
 
 .op-btn {
-    background-color:darkgoldenrod;
+	background-color: darkgoldenrod;
 }
 
 .selected {
-    filter: brightness(60%);
+	filter: brightness(60%);
+}
+
+.btn:hover {
+	opacity: 0.7;
+}
+
+.btn:active {
+	filter: brightness(50%);
 }
